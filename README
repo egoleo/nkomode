@@ -1,0 +1,131 @@
+--------------------------------------------------------------------
+Building the software using the Sun SDK
+--------------------------------------------------------------------
+
+Unix path conventions have been used below.  DOS users, switch the /'s
+for \'s.
+
+To build the code from its source :-
+
+  javac -d <destintion> SYahoo/*.java STest/*.java SSupport/*.java
+
+Note that without the -d option, the classes will not be placed into the
+correct directories for their packages.  <destination> is the directory
+where you want the package hierarchy to be built.
+
+Then *copy* (don't move) the following resources :-
+
+  SYahoo/challenge.bin  ==>  <destination>/ymsg/network/
+  SSupport/default_emotes  ==>  <destination>/ymsg/support/
+  SSupport/images/  ==>  <destination>/ymsg/support/images/
+
+--------------------------------------------------------------------
+Properties
+--------------------------------------------------------------------
+
+Properties can be added at the command line using the -D switch on the
+Sun JVM, or from within a Java application using the property methods of
+"java.lang.System".
+
+To switch on debugging information on STDOUT :-
+
+  -Dymsg.debug=true
+  
+To change the login and chat login timeouts to thirty seconds :-
+
+  -Dymsg.network.loginTimeout=30
+
+Here's a full list of properties jYMSG understands.  Some of them are
+specific to this API, others are standard properties used by Java API's
+to configure Java to a given network.  Properties can be changed at any 
+time while this API is in use, but some values are cached for efficient 
+operation.
+
+-----Part 1 : jYMSG API properties-----
+
+Name:      ymsg.debug
+Purpose:   Switches debugging info on to STDOUT.
+Cached:    When Util.class is loaded by JVM (unchangable at runtime).
+Default:   "false"
+Examples:  "true" "false"
+
+Name:      ymsg.network.loginTimeout
+Purpose:   Sets timeout in seconds for session/chat logins.  0 = off.
+Cached:    Never.
+Default:   "60"
+Examples   "23" "0" "-1"
+
+Name:      ymsg.network.directHost
+Purpose:   Sets the Yahoo host when using jYMSG directly or via SOCKS.
+Cached:    With each Direct/SOCKSConnectionHandler instantiation. 
+Default:   "scs.msg.yahoo.com"
+
+Name:      ymsg.network.directPorts
+Purpose:   Sets the Yahoo ports when using jYMSG directly.  The first port
+           in the list is the primary port, subsequent ports are fallbacks.
+Cached:    With each Direct/SOCKSConnectionHandler instantiation. 
+Default:   "5050,23,25,80"
+
+Name:      ymsg.network.httpHost
+Purpose:   Sets the Yahoo host when using jYMSG via HTTP.
+Cached:    With each HTTPConnectionHandler instantiation. 
+Default:   "http.pager.yahoo.com"
+
+Name:      ymsg.network.httpProxyAuth
+Purpose:   Sets the Proxy-Authorization header for HTTPConnectionHandler.
+Cached:    With each HTTPConnectionHandler instantiation. 
+Default:   Not set.  (Header not included if this prop. is null.)
+Examples:  "Basic Ab0Cd1Ef2Gh3z9=="   [*1]
+
+Name:      ymsg.network.fileTransferHost
+Purpose:   Sets the Yahoo host for non-P2P file transfer.
+Cached:    Never.
+Default:   "filetransfer.msg.yahoo.com"
+
+-----Part 2 : Java API properties-----
+
+Name:      http.proxyHost  (named 'proxyHost' before Java v1.3)
+Purpose:   Sets the HTTP proxy host for WWW traffic.
+Default:   Not set.
+
+Name:      http.proxyPort  (named 'proxyPost' before Java v1.3)
+Purpose:   Sets the HTTP proxy port for WWW traffic.
+Default:   Not set.
+
+Name:      http.nonProxyHosts
+Purpose:   Lists 'exceptions' hosts not fetched via HTTP proxy (usually 
+           internal intranet hosts).
+Default:   Not set.
+
+Name:      proxySet
+Purpose:   God knows!  (Probably a switch activating proxy pre Java 1.3.)
+Default:   Not set.  ("False"?)
+Notes:     JDK v1.0 to v1.2 only(?)
+
+Name:      socksProxyHost
+Purpose:   Set the SOCKS proxy host, for firewalls and private networks.
+Default:   Not set.
+
+Name:      socksProxyPort
+Purpose:   Set the SOCKS proxy port, for firewalls and private networks.
+Default:   Not set.
+
+Name:      socksProxySet
+Purpose:   God knows!  (Probably a switch activating proxy pre Java 1.3.)
+Default:   Not set.  ("False"?)
+Notes:     JDK v1.0 to v1.2 only(?)
+
+-----Part 3 : Footnotes-----
+
+[*1]
+Proxy-Authorization content takes the form of the encoding type name  
+(eg. "Basic") followed by the encoded string "username:password" -
+without the quotes, and with the words replaced by their actual values.
+'Basic' encoding (by far the most common) uses simple Base64.
+
+// Example, using the unofficial 'sun.misc' package
+String authString = username+":"+password;
+System.setProperty
+(   "ymsg.network.httpProxyAuth" ,
+    "Basic " + (new sun.misc.BASE64Encoder()).encode(authString.getBytes()) 
+);
