@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="nkomode" default="build" basedir=".">
+    <property file="build.properties" />
+
     <property name="src.dir" value="." />
     <property name="build.dir" value="build" />
+    <property name="build.src" value="${build.dir}/src" />
+
+    <property name="yahoo.user" value="youruser" />
+    <property name="yahoo.pass" value="yourpass" />
+
+    <filterset id="srcFilters">
+      <filter token="YAHOO_USER" value="${yahoo.user}" />
+      <filter token="YAHOO_PASS" value="${yahoo.pass}" />
+    </filterset>
 
     <target name="build" depends="pre-build">
-	<javac srcdir="${src.dir}" destdir="${build.dir}" />
+	<javac srcdir="${build.src}" destdir="${build.dir}" />
     </target>
 
     <target name="pre-build">
-	<mkdir dir="${build.dir}" />
+      <mkdir dir="${build.dir}" />
+      <mkdir dir="${build.src}" />
+
+      <copy todir="${build.src}">
+	<fileset dir=".">
+	  <include name="*.java" />
+	</fileset>
+
+	<filterset refid="srcFilters" />
+      </copy>
     </target>
 
     <target name="clean">

@@ -15,8 +15,8 @@ public class Nkomode {
           
           try {
                //login as a user
-               String username = "egoli10";
-               String password = "leopablo";
+               String username = "@YAHOO_USER@";
+               String password = "@YAHOO_PASS@";
                
                session.login(username, password);
                
